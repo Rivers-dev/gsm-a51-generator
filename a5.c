@@ -24,18 +24,24 @@ a symmetric session key Kc, we should generate a 228 bit frame of cipher text
 
 // Generate kc symmetric key 
 uint64_t generate_kc() {
-    return ((uint64_t)rand() << 32) | rand();
+    return ((uint64_t)rand() << KEY_SIZE/2) | rand();
 }
 
 // Generate random 22 bit frame counter
 uint32_t generate_fn() {
-    return rand() & ((1U << 22) - 1);
+    return rand() & ((1U << FRAME_SIZE) - 1);
 }
 
 int main() {
     srand(time(NULL)); // Rand is not secure; use platform specific cryptographic number generator
     uint64_t kc = generate_kc();
     uint32_t fn = generate_fn();
+
+    // LFSR register initialization
+    uint32_t R1 = 0;
+    uint32_t R2 = 0;
+    uint32_t R3 = 0;
+
     printf("Key: 0x%llu\n", kc);
     printf("Frame: %u\n", fn);
 
