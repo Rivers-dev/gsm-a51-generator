@@ -59,6 +59,14 @@ void initialize_regs(uint32_t *R1, uint32_t *R2, uint32_t *R3, uint64_t kc) {
     }
 }
 
+// Majority rules for irregular clocking
+uint8_t get_majority(uint32_t R1, uint32_t R2, uint32_t R3) {
+    uint8_t bitR1 = (R1 >> R1_CLOCK_BIT) & 1; 
+    uint8_t bitR2 = (R2 >> R2_CLOCK_BIT) & 1; 
+    uint8_t bitR3 = (R3 >> R3_CLOCK_BIT) & 1;
+
+    return (bitR1 + bitR2 + bitR3) >= 2 ? 1 : 0;
+}
 
 int main() {
     srand(time(NULL)); // Rand is not secure; use platform specific cryptographic number generator
@@ -67,12 +75,14 @@ int main() {
 
     // LFSR register initialization
     uint32_t R1 = 0, R2 = 0, R3 = 0;
-
     initialize_regs(&R1, &R2, &R3, kc);
+
 
     printf("Kn: %llu\n", kc);
     printf("Fn: %u\n", fn);
     binary(R1);
+    binary(R2);
+    binary(R3);
 
     return 0;
 }
