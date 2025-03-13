@@ -43,39 +43,22 @@ uint32_t generate_fn() {
 // Side effects: modifies registers
 void initialize_regs(uint32_t *R1, uint32_t *R2, uint32_t *R3, uint64_t kc) {
     for (int i = 0; i < KEY_SIZE; i++) {
-        // Extract first bit from key
-        uint64_t firstBitMask = 0x8000000000000000;
-        uint64_t kcFirstBit = (firstBitMask >> 63) & 1;
+        uint64_t kcBit = (kc >> i) & 1;
 
         // Clock R1
-        uint32_t firstR1Bit = (*R1 >> 18) & 1;
-        uint32_t secondR1Bit = (*R1 >> 17) & 1;
-        uint32_t thirdR1Bit = (*R1 >> 16) & 1;
-        uint32_t fourthR1Bit = (*R1 >> 13) & 1;
+        uint32_t feedback = ((*R1 >> 18) ^ (*R1 >> 17) ^ (*R1 >> 16) ^ (*R1 >> 13)) & 1;
+        *R1 = ((*R1 << 1) | (feedback ^ kcBit)) & 0x7FFFF; 
 
-        uint32_t feedback = ((((firstR1Bit ^ secondR1Bit) ^ thirdR1Bit) ^ fourthR1Bit) ^ kcFirstBit);
-        feedback &= 1; // Bit operation validity check
-        *R1 = ((*R1 & 0x7FFFF) << 1) | feedback; // Push the feedback bit onto the end of the R1 register
-    
         // Clock R2
-        uint32_t firstR2Bit = (*R2 >> 21) & 1;
-        uint32_t secondR2Bit = (*R2 >> 20) & 1;
-
-        feedback = (firstR2Bit ^ secondR2Bit) ^ kcFirstBit;
-        feedback &= 1;
-        *R2 = ((*R2 & 0x3FFFFF) << 1) | feedback;
+        feedback = ((*R2 >> 21) ^ (*R2 >> 20)) & 1;
+        *R2 = ((*R2 << 1) | (feedback ^ kcBit)) & 0x3FFFFF;
 
         // Clock R3
-        uint32_t firstR3Bit = (*R3 >> 22) & 1;
-        uint32_t secondR3Bit = (*R3 >> 21) & 1;
-        uint32_t thirdR3Bit = (*R3 >> 20) & 1;
-        uint32_t fourthR3Bit = (*R3 >> 7) & 1;
-
-        feedback = ((((firstR3Bit ^ secondR3Bit) ^ thirdR3Bit) ^ fourthR3Bit) ^ kcFirstBit);
-        feedback &= 1;
-        *R3 = ((*R1 & 0x7FFFFF) << 1) | feedback;
+        feedback = ((*R3 >> 22) ^ (*R3 >> 21) ^ (*R3 >> 20) ^ (*R3 >> 7)) & 1;
+        *R3 = ((*R3 << 1) | (feedback ^ kcBit)) & 0x7FFFFF; 
     }
 }
+
 
 int main() {
     srand(time(NULL)); // Rand is not secure; use platform specific cryptographic number generator
