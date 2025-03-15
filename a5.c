@@ -77,6 +77,10 @@ int main() {
     uint32_t R1 = 0, R2 = 0, R3 = 0;
     initialize_regs(&R1, &R2, &R3, kc);
 
+    // Now need 100 cycles of irregular clocking
+    for (int i = 0; i < 100; i++) {
+        
+    }
 
     printf("Kn: %llu\n", kc);
     printf("Fn: %u\n", fn);
