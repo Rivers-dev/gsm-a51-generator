@@ -3,6 +3,7 @@ This program is designed to generate and decrypt GSM A5/1 ciphertext.
 
 # Sources
 [This](https://sites.cs.ucsb.edu/~koclab/teaching/cren/project/2017/jensen+andersen.pdf) helpful PDF, which gives a roadmap on how to implement this algorithm
+
 Briceno, Marc. "A pedagogical implementation of A5/1." http://www.scard.org. (via the Wayback Machine)
 
 
